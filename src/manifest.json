@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2
+, "version": "0.1.0"
+, "name": "Save HTML"
+, "description": "Dead simple tool for save the dynamic html of current page."
+, "background": {
+    "scripts": ["browser-polyfill.min.js", "background.js"]
+  , "persistent": false
+  }
+, "browser_action": {}
+, "permissions": [
+    "activeTab"
+  , "downloads"
+  ]
+}
