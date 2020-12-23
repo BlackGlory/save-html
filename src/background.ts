@@ -7,7 +7,7 @@ browser.browserAction.onClicked.addListener(async tab => {
   try {
     await browser.downloads.download({
       url
-    , filename: title ? `${title}.html` : undefined
+    , filename: title ? convertToSafeFilename(`${title}.html`, ' ') : undefined
     , saveAs: true
     })
   } finally {
@@ -42,4 +42,21 @@ async function evaluate<T>(tabId: number, code: string): Promise<T> {
 
 function htmlToBlob(html: string): Blob {
   return new Blob([html], { type: 'text/html' })
+}
+
+function convertToSafeFilename(text: string, replaceText: string = '-') {
+  const banned = [
+    /\\/mg
+  , /\//mg
+  , /\:/mg
+  , /\*/mg
+  , /\?/mg
+  , /\"/mg
+  , /\</mg
+  , /\>/mg
+  , /\|/mg
+  , /\n/mg
+  , /\~/mg
+  ]
+  return banned.reduce((ret, exp) => ret.replace(exp, replaceText), text)
 }
