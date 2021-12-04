@@ -10,7 +10,6 @@ module.exports = {
   ]
 , rules: {
     'no-useless-escape': 'off'
-  , '@typescript-eslint/no-empty-function': 'off'
   , '@typescript-eslint/no-inferrable-types': 'off'
   }
 }
