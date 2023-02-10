@@ -1,47 +1,55 @@
-browser.browserAction.onClicked.addListener(async tab => {
+import browser from 'webextension-polyfill'
+import { assert, isntUndefined } from '@blackglory/prelude'
+import { Base64 } from 'js-base64'
+
+browser.action.onClicked.addListener(async tab => {
   const tabId = tab.id!
   const html = await getHTML(tabId)
   const title = await getTitle(tabId)
-  const blob = htmlToBlob(html)
-  const url = URL.createObjectURL(blob)
-  try {
-    await browser.downloads.download({
-      url
-    , filename: title ? convertToSafeFilename(`${title}.html`, ' ') : undefined
-    , saveAs: true
-    })
-  } finally {
-    URL.revokeObjectURL(url)
-  }
+  const url = htmlToDataURL(html)
+  const filename = title
+                 ? convertToSafeFilename(`${title}.html`, ' ')
+                 : undefined
+
+  await browser.downloads.download({
+    url
+  , filename
+  , saveAs: true
+  })
 })
 
 function getHTML(tabId: number): Promise<string> {
-  return evaluate<string>(tabId, `
-    (() => {
-      // https://github.com/puppeteer/puppeteer/blob/d8932ca18722cb97811577277e4d7e3add250d10/src/common/DOMWorld.ts#L226-L231
-      let retVal = ''
-      if (document.doctype) {
-        retVal = new XMLSerializer().serializeToString(document.doctype)
-      }
-      if (document.documentElement) {
-        retVal += document.documentElement.outerHTML
-      }
-      return retVal
-    })()
-  `)
+  return evalInTab<string>(tabId, () => {
+    // https://github.com/puppeteer/puppeteer/blob/d8932ca18722cb97811577277e4d7e3add250d10/src/common/DOMWorld.ts#L226-L231
+    let retVal = ''
+    if (document.doctype) {
+      retVal = new XMLSerializer().serializeToString(document.doctype)
+    }
+    if (document.documentElement) {
+      retVal += document.documentElement.outerHTML
+    }
+    return retVal
+  })
 }
 
 function getTitle(tabId: number): Promise<string> {
-  return evaluate<string>(tabId, 'document.title')
+  return evalInTab<string>(tabId, () => document.title)
 }
 
-async function evaluate<T>(tabId: number, code: string): Promise<T> {
-  const results = await browser.tabs.executeScript(tabId, { code })
-  return results[0]
+async function evalInTab<T>(tabId: number, fn: () => T): Promise<T> {
+  const results = await browser.scripting.executeScript({
+    target: { tabId }
+  , func: fn
+  })
+
+  const result = results[0].result
+  assert(isntUndefined(result), 'The result is undefined')
+
+  return result as T
 }
 
-function htmlToBlob(html: string): Blob {
-  return new Blob([html], { type: 'text/html' })
+function htmlToDataURL(html: string): string {
+  return 'data:text/html;base64,' + Base64.encode(html)
 }
 
 function convertToSafeFilename(text: string, replaceText: string = '-') {

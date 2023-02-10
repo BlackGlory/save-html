@@ -22,6 +22,7 @@
     "@commitlint/config-conventional": "^17.4.2",
     "@types/chrome": "^0.0.212",
     "@types/firefox-webext-browser": "^109.0.0",
+    "@types/webextension-polyfill": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
     "copy-webpack-plugin": "^11.0.0",
@@ -38,6 +39,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@blackglory/prelude": "^0.3.1",
+    "js-base64": "^3.7.5",
     "webextension-polyfill": "^0.10.0"
   }
 }
