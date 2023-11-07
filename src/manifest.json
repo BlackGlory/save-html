@@ -3,6 +3,7 @@
 , "version": "0.1.0"
 , "name": "Save HTML"
 , "description": "Dead simple tool for save the dynamic html of current page."
+, "author": "BlackGlory"
 , "background": {
     "service_worker": "background.js"
   }
