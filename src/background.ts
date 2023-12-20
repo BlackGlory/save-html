@@ -1,8 +1,7 @@
-import browser from 'webextension-polyfill'
 import { assert, isntUndefined } from '@blackglory/prelude'
 import { Base64 } from 'js-base64'
 
-browser.action.onClicked.addListener(async tab => {
+chrome.action.onClicked.addListener(async tab => {
   const tabId = tab.id!
   const html = await getHTML(tabId)
   const title = await getTitle(tabId)
@@ -11,7 +10,7 @@ browser.action.onClicked.addListener(async tab => {
                  ? convertToSafeFilename(`${title}.html`, ' ')
                  : undefined
 
-  await browser.downloads.download({
+  await chrome.downloads.download({
     url
   , filename
   , saveAs: true
@@ -37,7 +36,7 @@ function getTitle(tabId: number): Promise<string> {
 }
 
 async function evalInTab<T>(tabId: number, fn: () => T): Promise<T> {
-  const results = await browser.scripting.executeScript({
+  const results = await chrome.scripting.executeScript({
     target: { tabId }
   , func: fn
   })
