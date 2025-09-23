@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2018"
-  , "module": "ES2015"
-  , "moduleResolution": "Node"
+    "target": "es2018"
+  , "module": "NodeNext"
   , "allowSyntheticDefaultImports": true
   , "removeComments": true
   , "strict": true

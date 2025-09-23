@@ -1,15 +1,17 @@
 {
   "private": true,
-  "name": "save-html",
   "repository": "git@github.com:BlackGlory/save-html.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src",
-    "prepublishOnly": "run-s clean build",
     "clean": "rimraf dist",
-    "build": "webpack --config webpack.prod.js",
-    "dev": "webpack --watch --config webpack.dev.js"
+    "dev": "webpack --watch --config webpack.dev.cjs",
+    "build": "webpack --config webpack.prod.cjs"
   },
   "husky": {
     "hooks": {
@@ -18,26 +20,26 @@
     }
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "@types/chrome": "^0.0.254",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "copy-webpack-plugin": "^11.0.0",
-    "eslint": "^8.56.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.36.0",
+    "@types/chrome": "^0.1.12",
+    "copy-webpack-plugin": "^13.0.1",
+    "eslint": "^9.36.0",
     "husky": "^4.3.8",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^5.0.5",
-    "terser-webpack-plugin": "^5.3.9",
-    "ts-loader": "^9.5.1",
-    "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "typescript": "5.3.3",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.10.0"
+    "rimraf": "^6.0.1",
+    "terser-webpack-plugin": "^5.3.14",
+    "ts-loader": "^9.5.4",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "^8.44.1",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-merge": "^6.0.1"
   },
   "dependencies": {
-    "@blackglory/prelude": "^0.3.4",
-    "js-base64": "^3.7.5"
+    "@blackglory/prelude": "^0.4.0",
+    "js-base64": "^3.7.8"
   }
 }
