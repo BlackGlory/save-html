@@ -2,7 +2,9 @@ import { assert, isntUndefined } from '@blackglory/prelude'
 import { Base64 } from 'js-base64'
 
 chrome.action.onClicked.addListener(async tab => {
-  const tabId = tab.id!
+  const tabId = tab.id
+  assert(isntUndefined(tabId), 'The tab id is undefined')
+
   const html = await getHTML(tabId)
   const title = await getTitle(tabId)
   const url = htmlToDataURL(html)
@@ -19,15 +21,23 @@ chrome.action.onClicked.addListener(async tab => {
 
 function getHTML(tabId: number): Promise<string> {
   return evalInTab<string>(tabId, () => {
-    // https://github.com/puppeteer/puppeteer/blob/d8932ca18722cb97811577277e4d7e3add250d10/src/common/DOMWorld.ts#L226-L231
-    let retVal = ''
-    if (document.doctype) {
-      retVal = new XMLSerializer().serializeToString(document.doctype)
+    // https://github.com/puppeteer/puppeteer/blob/d68a7cf4b26d79e55760435fd0b742e2392d066f/packages/puppeteer-core/src/api/Frame.ts#L803-L815
+    let content = ''
+
+    for (const node of document.childNodes) {
+      switch (node) {
+        case document.documentElement: {
+          content += document.documentElement.outerHTML
+
+          break
+        }
+        default: {
+          content += new XMLSerializer().serializeToString(node)
+        }
+      }
     }
-    if (document.documentElement) {
-      retVal += document.documentElement.outerHTML
-    }
-    return retVal
+
+    return content
   })
 }
 
@@ -52,7 +62,7 @@ function htmlToDataURL(html: string): string {
 }
 
 function convertToSafeFilename(text: string, replaceText: string = '-') {
-  const banned = [
+  const expressions = [
     /\\/mg
   , /\//mg
   , /\:/mg
@@ -65,5 +75,8 @@ function convertToSafeFilename(text: string, replaceText: string = '-') {
   , /\n/mg
   , /\~/mg
   ]
-  return banned.reduce((ret, exp) => ret.replace(exp, replaceText), text)
+
+  return expressions.reduce((result, expression) => {
+    return result.replace(expression, replaceText)
+  }, text)
 }
