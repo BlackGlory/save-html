@@ -63,20 +63,22 @@ function htmlToDataURL(html: string): string {
 
 function convertToSafeFilename(text: string, replaceText: string = '-') {
   const expressions = [
-    /\\/mg
-  , /\//mg
-  , /\:/mg
-  , /\*/mg
-  , /\?/mg
-  , /\"/mg
-  , /\</mg
-  , /\>/mg
-  , /\|/mg
-  , /\n/mg
-  , /\~/mg
+    /\\/g
+  , /\//g
+  , /\:/g
+  , /\*/g
+  , /\?/g
+  , /\"/g
+  , /\</g
+  , /\>/g
+  , /\|/g
+  , /\s+/g
+  , /\~/g
   ]
 
-  return expressions.reduce((result, expression) => {
-    return result.replace(expression, replaceText)
-  }, text)
+  return expressions
+    .reduce((result, expression) => {
+      return result.replace(expression, replaceText)
+    }, text)
+    .trim()
 }
